@@ -55,11 +55,13 @@ export default function DashboardPage() {
   }
 
   const bearish = isMacroBearish(data.metrics.us_10y_yield, data.metrics.usdt_dominance);
-  const updatedAt = new Date(data.timestamp).toLocaleString('en-US', {
+  const updatedAt = new Date(data.timestamp).toLocaleString('en-SG', {
+    timeZone: 'Asia/Singapore',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    hour12: false
   });
 
   return (
