@@ -407,8 +407,8 @@ class MetricsFetcher:
         
         # Compile final output
         output = {
-            "timestamp": datetime.now().isoformat(),
-            "timestamp_unix": int(datetime.now().timestamp()),
+            "timestamp": datetime.utcnow().isoformat() + "Z",  # Explicitly mark as UTC
+            "timestamp_unix": int(datetime.utcnow().timestamp()),
             "metrics": self.data,
             "summary": {
                 "total_metrics": len(self.results),
@@ -433,18 +433,185 @@ class MetricsFetcher:
             print(f"✅ Data saved to: {filename}")
         except Exception as e:
             print(f"❌ Failed to save JSON: {e}")
+    
+    def load_old_data(self, filename: str = "dashboard_data.json") -> Optional[Dict[str, Any]]:
+        """
+        Load previous metrics data from JSON file.
+        
+        Args:
+            filename: JSON filename to load
+            
+        Returns:
+            Previous data dictionary or None if file doesn't exist
+        """
+        try:
+            with open(filename, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print("ℹ️  No previous data found (first run)")
+            return None
+        except Exception as e:
+            print(f"⚠️  Failed to load old data: {e}")
+            return None
+    
+    def check_metrics_changed(self, new_data: Dict[str, Any], old_data: Optional[Dict[str, Any]]) -> tuple[bool, list]:
+        """
+        Check if any of the 6 strategic metrics have changed.
+        
+        Args:
+            new_data: Newly fetched metrics
+            old_data: Previous metrics data
+            
+        Returns:
+            Tuple of (should_notify: bool, changed_metrics: list)
+        """
+        # The 6 metrics to track
+        tracked_metrics = [
+            'us_10y_yield',
+            'fed_net_liquidity',
+            'bitcoin_price',
+            'stablecoin_mcap',
+            'usdt_dominance',
+            'rwa_tvl'
+        ]
+        
+        # If no old data exists (first run), notify
+        if old_data is None:
+            return True, tracked_metrics
+        
+        changed_metrics = []
+        old_metrics = old_data.get('metrics', {})
+        new_metrics = new_data.get('metrics', {})
+        
+        # Check each metric for changes
+        for metric in tracked_metrics:
+            old_value = old_metrics.get(metric)
+            new_value = new_metrics.get(metric)
+            
+            # If metric changed or is new, mark it
+            if old_value != new_value:
+                changed_metrics.append(metric)
+        
+        should_notify = len(changed_metrics) > 0
+        return should_notify, changed_metrics
+    
+    def format_telegram_message(self, data: Dict[str, Any]) -> str:
+        """
+        Format metrics data into HTML message for Telegram.
+        
+        Args:
+            data: Metrics data dictionary
+            
+        Returns:
+            Formatted HTML string
+        """
+        metrics = data.get('metrics', {})
+        
+        # Extract values with fallbacks
+        us_10y = metrics.get('us_10y_yield', 'N/A')
+        fed_liquidity = metrics.get('fed_net_liquidity', 'N/A')
+        btc_price = metrics.get('bitcoin_price', 'N/A')
+        stablecoin_mcap = metrics.get('stablecoin_mcap', 'N/A')
+        usdt_dominance = metrics.get('usdt_dominance', 'N/A')
+        rwa_value = metrics.get('rwa_tvl', 'N/A')
+        
+        # Format numbers
+        us_10y_str = f"{us_10y:.2f}" if isinstance(us_10y, (int, float)) else str(us_10y)
+        fed_liquidity_str = f"{fed_liquidity:,.0f}B" if isinstance(fed_liquidity, (int, float)) else str(fed_liquidity)
+        btc_price_str = f"{btc_price:,.0f}" if isinstance(btc_price, (int, float)) else str(btc_price)
+        stablecoin_mcap_str = f"{stablecoin_mcap/1e9:.1f}B" if isinstance(stablecoin_mcap, (int, float)) else str(stablecoin_mcap)
+        usdt_dominance_str = f"{usdt_dominance:.2f}" if isinstance(usdt_dominance, (int, float)) else str(usdt_dominance)
+        rwa_value_str = f"{rwa_value/1e9:.2f}B" if isinstance(rwa_value, (int, float)) else str(rwa_value)
+        
+        # Determine risk status
+        risk_status = "⚠️ RISK OFF" if isinstance(us_10y, (int, float)) and us_10y > 4.5 else "✅ RISK ON"
+        
+        # Build message
+        message = f"""<b>🚨 Strategic Cockpit Update</b>
+
+<b>Macro (The Ceiling)</b>
+🏛️ <b>US 10Y:</b> {us_10y_str}%
+💧 <b>Liquidity:</b> ${fed_liquidity_str}
+
+<b>Market (The Floor)</b>
+₿ <b>BTC:</b> ${btc_price_str}
+🌊 <b>Stablecoins:</b> ${stablecoin_mcap_str}
+
+<b>Alpha Signals</b>
+😨 <b>USDT Dom:</b> {usdt_dominance_str}%
+🏦 <b>RWA TVL:</b> ${rwa_value_str}
+
+<b>Status:</b> {risk_status}"""
+        
+        return message
+    
+    def send_telegram_notification(self, message: str, telegram_bot_token: str, telegram_chat_id: str) -> bool:
+        """
+        Send notification to Telegram.
+        
+        Args:
+            message: Message text to send (HTML formatted)
+            telegram_bot_token: Telegram bot token
+            telegram_chat_id: Telegram chat ID
+            
+        Returns:
+            True if sent successfully, False otherwise
+        """
+        if not telegram_bot_token or not telegram_chat_id:
+            print("⚠️  Telegram credentials not configured. Skipping notification.")
+            return False
+        
+        try:
+            url = f"https://api.telegram.org/bot{telegram_bot_token}/sendMessage"
+            payload = {
+                "chat_id": telegram_chat_id,
+                "text": message,
+                "parse_mode": "HTML"
+            }
+            
+            response = requests.post(url, json=payload, timeout=10)
+            response.raise_for_status()
+            
+            print("✅ Telegram notification sent successfully")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Failed to send Telegram notification: {e}")
+            return False
 
 
 def main():
     """Main execution function."""
-    # Initialize fetcher (replace with your actual FRED API key)
-    fetcher = MetricsFetcher(fred_api_key="1be1d07bd97df586c3e81893338b87dc")
+    import os
+    
+    # Get credentials from environment variables
+    fred_api_key = os.getenv('FRED_API_KEY', '1be1d07bd97df586c3e81893338b87dc')
+    telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN', '')
+    telegram_chat_id = os.getenv('TELEGRAM_CHAT_ID', '')
+    
+    # Initialize fetcher
+    fetcher = MetricsFetcher(fred_api_key=fred_api_key)
+    
+    # Load old data for comparison
+    old_data = fetcher.load_old_data()
     
     # Fetch all metrics
-    output = fetcher.fetch_all_metrics()
+    new_data = fetcher.fetch_all_metrics()
     
-    # Save to JSON
-    fetcher.save_to_json(output)
+    # Check if any metrics changed
+    should_notify, changed_metrics = fetcher.check_metrics_changed(new_data, old_data)
+    
+    if should_notify:
+        print(f"\n📊 Metrics changed: {', '.join(changed_metrics)}")
+        
+        # Format and send Telegram notification
+        message = fetcher.format_telegram_message(new_data)
+        fetcher.send_telegram_notification(message, telegram_bot_token, telegram_chat_id)
+    else:
+        print("\nℹ️  No metrics changed since last update")
+    
+    # Save to JSON (always save to update timestamp)
+    fetcher.save_to_json(new_data)
 
 
 if __name__ == "__main__":
