@@ -15,6 +15,11 @@ export function MacroSignalCard({
     us10yYield7dChange,
     fedNetLiquidity7dChange
 }: MacroSignalCardProps) {
+    // Calculate Fed Net Liquidity absolute change in billions
+    const fedNetLiquidityAbsoluteChange = fedNetLiquidity7dChange !== undefined
+        ? (fedNetLiquidity / 1_000_000) * (fedNetLiquidity7dChange / 100)
+        : undefined;
+
     return (
         <div
             className={`
@@ -61,15 +66,22 @@ export function MacroSignalCard({
                         <p className="text-4xl font-bold text-white">
                             ${(fedNetLiquidity / 1_000_000).toFixed(2)}T
                         </p>
-                        {fedNetLiquidity7dChange !== undefined && (
-                            <span className={`text-sm font-bold ${fedNetLiquidity7dChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                                {fedNetLiquidity7dChange >= 0 ? '↑' : '↓'}{fedNetLiquidity7dChange >= 0 ? '+' : ''}{fedNetLiquidity7dChange.toFixed(2)}%
+                        {fedNetLiquidityAbsoluteChange !== undefined && (
+                            <span className={`text-sm font-bold ${fedNetLiquidityAbsoluteChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                {fedNetLiquidityAbsoluteChange >= 0 ? '↑+' : '↓'}{fedNetLiquidityAbsoluteChange >= 0 ? '' : '-'}${Math.abs(fedNetLiquidityAbsoluteChange).toFixed(0)}B
                             </span>
                         )}
                     </div>
                     <p className="text-xs text-slate-400">
                         Fed Net Liquidity
-                        {fedNetLiquidity7dChange !== undefined && <span className="text-slate-500"> • Since Last Week</span>}
+                        {fedNetLiquidityAbsoluteChange !== undefined && (
+                            <span className="text-slate-500">
+                                {' • WoW '}
+                                <span className={fedNetLiquidityAbsoluteChange >= 0 ? 'text-emerald-400/70' : 'text-red-400/70'}>
+                                    ({fedNetLiquidityAbsoluteChange >= 0 ? 'Injection' : 'Drain'})
+                                </span>
+                            </span>
+                        )}
                     </p>
                 </div>
 
