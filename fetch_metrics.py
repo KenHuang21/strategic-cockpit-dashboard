@@ -553,6 +553,7 @@ class MetricsFetcher:
     def format_telegram_message(self, formatted_metrics: Dict[str, str]) -> str:
         """
         Format metrics data into HTML message for Telegram using pre-formatted strings.
+        Only shows metrics that have changed (filters out unchanged metrics).
         
         Args:
             formatted_metrics: Dictionary of pre-formatted metric strings with deltas
@@ -560,22 +561,60 @@ class MetricsFetcher:
         Returns:
             Formatted HTML string
         """
-        # Build message using pre-formatted strings
-        message = f"""\u003cb\u003e🚨 Key Indicator 15min Scan\u003c/b\u003e
-
-\u003cb\u003eMacro\u003c/b\u003e
-🏛️ \u003cb\u003eUS 10Y:\u003c/b\u003e {formatted_metrics.get('us_10y_yield', 'N/A')}
-💧 \u003cb\u003eLiquidity:\u003c/b\u003e {formatted_metrics.get('fed_net_liquidity', 'N/A')}
-
-\u003cb\u003eMarket\u003c/b\u003e
-₿ \u003cb\u003eBTC:\u003c/b\u003e {formatted_metrics.get('bitcoin_price', 'N/A')}
-🌊 \u003cb\u003eStables:\u003c/b\u003e {formatted_metrics.get('stablecoin_mcap', 'N/A')}
-
-\u003cb\u003eAlpha\u003c/b\u003e
-😨 \u003cb\u003eUSDT Dom:\u003c/b\u003e {formatted_metrics.get('usdt_dominance', 'N/A')}
-🏦 \u003cb\u003eRWA TVL:\u003c/b\u003e {formatted_metrics.get('rwa_tvl', 'N/A')}"""
+        # Organize metrics by category
+        macro_metrics = [
+            ('🏛️ <b>US 10Y:</b>', 'us_10y_yield'),
+            ('💧 <b>Liquidity:</b>', 'fed_net_liquidity'),
+        ]
         
-        return message
+        market_metrics = [
+            ('₿ <b>BTC:</b>', 'bitcoin_price'),
+            ('🌊 <b>Stables:</b>', 'stablecoin_mcap'),
+        ]
+        
+        alpha_metrics = [
+            ('😨 <b>USDT Dom:</b>', 'usdt_dominance'),
+            ('🏦 <b>RWA TVL:</b>', 'rwa_tvl'),
+        ]
+        
+        # Build sections dynamically, only including changed metrics
+        message_parts = ['<b>🚨 Key Indicator 15min Scan</b>\n']
+        
+        # Macro section
+        macro_lines = []
+        for label, key in macro_metrics:
+            value = formatted_metrics.get(key, '')
+            if value and '(➖)' not in value:  # Skip unchanged metrics
+                macro_lines.append(f"{label} {value}")
+        
+        if macro_lines:
+            message_parts.append('\n<b>Macro</b>')
+            message_parts.extend(macro_lines)
+        
+        # Market section
+        market_lines = []
+        for label, key in market_metrics:
+            value = formatted_metrics.get(key, '')
+            if value and '(➖)' not in value:
+                market_lines.append(f"{label} {value}")
+        
+        if market_lines:
+            message_parts.append('\n<b>Market</b>')
+            message_parts.extend(market_lines)
+        
+        # Alpha section
+        alpha_lines = []
+        for label, key in alpha_metrics:
+            value = formatted_metrics.get(key, '')
+            if value and '(➖)' not in value:
+                alpha_lines.append(f"{label} {value}")
+        
+        if alpha_lines:
+            message_parts.append('\n<b>Alpha</b>')
+            message_parts.extend(alpha_lines)
+        
+        return '\n'.join(message_parts)
+    
     
     
     def send_telegram_notification(self, message: str, telegram_bot_token: str, telegram_chat_id: str) -> bool:
