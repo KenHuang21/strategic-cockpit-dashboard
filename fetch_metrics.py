@@ -8,10 +8,21 @@ import json
 import requests
 import time
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Tuple
 import yfinance as yf
 from fredapi import Fred
 from tabulate import tabulate
+
+
+# Notification Thresholds (reduce noise by only alerting on significant changes)
+THRESHOLDS = {
+    'bitcoin_price': 0.005,        # 0.5% change
+    'stablecoin_mcap': 0.001,      # 0.1% change
+    'usdt_dominance': 0.005,       # 0.5% change
+    'rwa_tvl': 0.01,               # 1.0% change
+    'us_10y_yield': 0.0,           # Any change (critical metric)
+    'fed_net_liquidity': 0.0,      # Any change (critical metric)
+}
 
 
 class MetricsFetcher:
@@ -454,96 +465,118 @@ class MetricsFetcher:
             print(f"⚠️  Failed to load old data: {e}")
             return None
     
-    def check_metrics_changed(self, new_data: Dict[str, Any], old_data: Optional[Dict[str, Any]]) -> tuple[bool, list]:
+    
+    def check_metrics_changed(self, new_data: Dict[str, Any], old_data: Optional[Dict[str, Any]]) -> Tuple[bool, Dict[str, str]]:
         """
-        Check if any of the 6 strategic metrics have changed.
+        Check if any of the 6 strategic metrics have changed beyond thresholds.
+        Returns formatted strings with deltas.
         
         Args:
             new_data: Newly fetched metrics
             old_data: Previous metrics data
             
         Returns:
-            Tuple of (should_notify: bool, changed_metrics: list)
+            Tuple of (should_notify: bool, formatted_strings: dict)
         """
-        # The 6 metrics to track
-        tracked_metrics = [
-            'us_10y_yield',
-            'fed_net_liquidity',
-            'bitcoin_price',
-            'stablecoin_mcap',
-            'usdt_dominance',
-            'rwa_tvl'
+        new_metrics = new_data.get('metrics', {})
+        formatted_strings = {}
+        triggered = False
+        
+        # If no old data exists (first run), format without deltas and notify
+        if old_data is None:
+            # Format without deltas for first run
+            us_10y = new_metrics.get('us_10y_yield', 'N/A')
+            fed_liquidity = new_metrics.get('fed_net_liquidity', 'N/A')
+            btc_price = new_metrics.get('bitcoin_price', 'N/A')
+            stablecoin_mcap = new_metrics.get('stablecoin_mcap', 'N/A')
+            usdt_dominance = new_metrics.get('usdt_dominance', 'N/A')
+            rwa_value = new_metrics.get('rwa_tvl', 'N/A')
+            
+            formatted_strings['us_10y_yield'] = f"{us_10y:.2f}%" if isinstance(us_10y, (int, float)) else str(us_10y)
+            formatted_strings['fed_net_liquidity'] = f"${fed_liquidity:,.0f}B" if isinstance(fed_liquidity, (int, float)) else str(fed_liquidity)
+            formatted_strings['bitcoin_price'] = f"${btc_price:,.0f}" if isinstance(btc_price, (int, float)) else str(btc_price)
+            formatted_strings['stablecoin_mcap'] = f"${stablecoin_mcap/1e9:.1f}B" if isinstance(stablecoin_mcap, (int, float)) else str(stablecoin_mcap)
+            formatted_strings['usdt_dominance'] = f"{usdt_dominance:.2f}%" if isinstance(usdt_dominance, (int, float)) else str(usdt_dominance)
+            formatted_strings['rwa_tvl'] = f"${rwa_value/1e9:.2f}B" if isinstance(rwa_value, (int, float)) else str(rwa_value)
+            
+            return True, formatted_strings
+        
+        old_metrics = old_data.get('metrics', {})
+        
+        # Check each metric with threshold and format with delta
+        metrics_to_check = [
+            ('us_10y_yield', lambda v: f"{v:.2f}%", 1),
+            ('fed_net_liquidity', lambda v: f"${v:,.0f}B", 1),
+            ('bitcoin_price', lambda v: f"${v:,.0f}", 1),
+            ('stablecoin_mcap', lambda v: f"${v/1e9:.1f}B", 1),
+            ('usdt_dominance', lambda v: f"{v:.2f}%", 1),
+            ('rwa_tvl', lambda v: f"${v/1e9:.2f}B", 1),
         ]
         
-        # If no old data exists (first run), notify
-        if old_data is None:
-            return True, tracked_metrics
-        
-        changed_metrics = []
-        old_metrics = old_data.get('metrics', {})
-        new_metrics = new_data.get('metrics', {})
-        
-        # Check each metric for changes
-        for metric in tracked_metrics:
-            old_value = old_metrics.get(metric)
-            new_value = new_metrics.get(metric)
+        for metric_key, formatter, _ in metrics_to_check:
+            old_value = old_metrics.get(metric_key)
+            new_value = new_metrics.get(metric_key)
             
-            # If metric changed or is new, mark it
-            if old_value != new_value:
-                changed_metrics.append(metric)
+            if new_value is None:
+                formatted_strings[metric_key] = 'N/A'
+                continue
+            
+            # Format base value
+            formatted_value = formatter(new_value)
+            
+            # Calculate delta
+            if old_value is not None and old_value != 0:
+                delta_pct = (new_value - old_value) / abs(old_value)
+                abs_delta_pct = abs(delta_pct)
+                
+                # Check threshold
+                threshold = THRESHOLDS.get(metric_key, 0.0)
+                if abs_delta_pct >= threshold:
+                    triggered = True
+                
+                # Format delta indicator
+                if delta_pct > 0:
+                    delta_str = f" (🟢 +{delta_pct*100:.2f}%)"
+                elif delta_pct < 0:
+                    delta_str = f" (🔴 {delta_pct*100:.2f}%)"
+                else:
+                    delta_str = " (➖)"
+                
+                formatted_strings[metric_key] = formatted_value + delta_str
+            else:
+                # No old value or old value is 0, just show new value
+                formatted_strings[metric_key] = formatted_value
         
-        should_notify = len(changed_metrics) > 0
-        return should_notify, changed_metrics
+        return triggered, formatted_strings
     
-    def format_telegram_message(self, data: Dict[str, Any]) -> str:
+    
+    def format_telegram_message(self, formatted_metrics: Dict[str, str]) -> str:
         """
-        Format metrics data into HTML message for Telegram.
+        Format metrics data into HTML message for Telegram using pre-formatted strings.
         
         Args:
-            data: Metrics data dictionary
+            formatted_metrics: Dictionary of pre-formatted metric strings with deltas
             
         Returns:
             Formatted HTML string
         """
-        metrics = data.get('metrics', {})
-        
-        # Extract values with fallbacks
-        us_10y = metrics.get('us_10y_yield', 'N/A')
-        fed_liquidity = metrics.get('fed_net_liquidity', 'N/A')
-        btc_price = metrics.get('bitcoin_price', 'N/A')
-        stablecoin_mcap = metrics.get('stablecoin_mcap', 'N/A')
-        usdt_dominance = metrics.get('usdt_dominance', 'N/A')
-        rwa_value = metrics.get('rwa_tvl', 'N/A')
-        
-        # Format numbers
-        us_10y_str = f"{us_10y:.2f}" if isinstance(us_10y, (int, float)) else str(us_10y)
-        fed_liquidity_str = f"{fed_liquidity:,.0f}B" if isinstance(fed_liquidity, (int, float)) else str(fed_liquidity)
-        btc_price_str = f"{btc_price:,.0f}" if isinstance(btc_price, (int, float)) else str(btc_price)
-        stablecoin_mcap_str = f"{stablecoin_mcap/1e9:.1f}B" if isinstance(stablecoin_mcap, (int, float)) else str(stablecoin_mcap)
-        usdt_dominance_str = f"{usdt_dominance:.2f}" if isinstance(usdt_dominance, (int, float)) else str(usdt_dominance)
-        rwa_value_str = f"{rwa_value/1e9:.2f}B" if isinstance(rwa_value, (int, float)) else str(rwa_value)
-        
-        # Determine risk status
-        risk_status = "⚠️ RISK OFF" if isinstance(us_10y, (int, float)) and us_10y > 4.5 else "✅ RISK ON"
-        
-        # Build message
-        message = f"""<b>🚨 Strategic Cockpit Update</b>
+        # Build message using pre-formatted strings
+        message = f"""\u003cb\u003e🚨 Key Indicator 15min Scan\u003c/b\u003e
 
-<b>Macro (The Ceiling)</b>
-🏛️ <b>US 10Y:</b> {us_10y_str}%
-💧 <b>Liquidity:</b> ${fed_liquidity_str}
+\u003cb\u003eMacro\u003c/b\u003e
+🏛️ \u003cb\u003eUS 10Y:\u003c/b\u003e {formatted_metrics.get('us_10y_yield', 'N/A')}
+💧 \u003cb\u003eLiquidity:\u003c/b\u003e {formatted_metrics.get('fed_net_liquidity', 'N/A')}
 
-<b>Market (The Floor)</b>
-₿ <b>BTC:</b> ${btc_price_str}
-🌊 <b>Stablecoins:</b> ${stablecoin_mcap_str}
+\u003cb\u003eMarket\u003c/b\u003e
+₿ \u003cb\u003eBTC:\u003c/b\u003e {formatted_metrics.get('bitcoin_price', 'N/A')}
+🌊 \u003cb\u003eStables:\u003c/b\u003e {formatted_metrics.get('stablecoin_mcap', 'N/A')}
 
-<b>Alpha Signals</b>
-😨 <b>USDT Dom:</b> {usdt_dominance_str}%
-🏦 <b>RWA TVL:</b> ${rwa_value_str}
-
-<b>Status:</b> {risk_status}"""
+\u003cb\u003eAlpha\u003c/b\u003e
+😨 \u003cb\u003eUSDT Dom:\u003c/b\u003e {formatted_metrics.get('usdt_dominance', 'N/A')}
+🏦 \u003cb\u003eRWA TVL:\u003c/b\u003e {formatted_metrics.get('rwa_tvl', 'N/A')}"""
         
         return message
+    
     
     def send_telegram_notification(self, message: str, telegram_bot_token: str, telegram_chat_id: str) -> bool:
         """
@@ -600,17 +633,20 @@ def main():
     # Fetch all metrics
     new_data = fetcher.fetch_all_metrics()
     
-    # Check if any metrics changed
-    should_notify, changed_metrics = fetcher.check_metrics_changed(new_data, old_data)
+    # Check if any metrics breached thresholds (returns formatted strings with deltas)
+    should_notify, formatted_metrics = fetcher.check_metrics_changed(new_data, old_data)
     
     if should_notify:
-        print(f"\n📊 Metrics changed: {', '.join(changed_metrics)}")
+        if old_data is None:
+            print("\n📊 First run - sending initialization notification")
+        else:
+            print("\n🚨 Threshold breached! Sending notification...")
         
-        # Format and send Telegram notification
-        message = fetcher.format_telegram_message(new_data)
+        # Format and send Telegram notification with formatted strings
+        message = fetcher.format_telegram_message(formatted_metrics)
         fetcher.send_telegram_notification(message, telegram_bot_token, telegram_chat_id)
     else:
-        print("\nℹ️  No metrics changed since last update")
+        print("\nℹ️  Changes within threshold. Skipping notification.")
     
     # Save to JSON (always save to update timestamp)
     fetcher.save_to_json(new_data)
