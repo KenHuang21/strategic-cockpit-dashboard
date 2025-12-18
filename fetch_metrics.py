@@ -592,8 +592,10 @@ def main():
     # Initialize fetcher
     fetcher = MetricsFetcher(fred_api_key=fred_api_key)
     
-    # Load old data for comparison
-    old_data = fetcher.load_old_data()
+    # Load old data for comparison (check public folder first, then root)
+    old_data = fetcher.load_old_data("public/dashboard_data.json")
+    if old_data is None:
+        old_data = fetcher.load_old_data("dashboard_data.json")
     
     # Fetch all metrics
     new_data = fetcher.fetch_all_metrics()
