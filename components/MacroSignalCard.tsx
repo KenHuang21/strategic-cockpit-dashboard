@@ -4,11 +4,17 @@ interface MacroSignalCardProps {
     us10yYield: number;
     fedNetLiquidity: number;
     isBearish: boolean;
+    us10yYield7dChange?: number;
+    fedNetLiquidity7dChange?: number;
 }
 
-export function MacroSignalCard({ us10yYield, fedNetLiquidity, isBearish }: MacroSignalCardProps) {
-    const yieldChange = -0.12;
-
+export function MacroSignalCard({
+    us10yYield,
+    fedNetLiquidity,
+    isBearish,
+    us10yYield7dChange,
+    fedNetLiquidity7dChange
+}: MacroSignalCardProps) {
     return (
         <div
             className={`
@@ -37,19 +43,34 @@ export function MacroSignalCard({ us10yYield, fedNetLiquidity, isBearish }: Macr
                         <p className="text-5xl font-bold text-white">
                             {us10yYield.toFixed(2)}%
                         </p>
-                        <span className={`text-sm font-bold ${yieldChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                            {yieldChange >= 0 ? '↑' : '↓'}{Math.abs(yieldChange).toFixed(2)}%
-                        </span>
+                        {us10yYield7dChange !== undefined && (
+                            <span className={`text-sm font-bold ${us10yYield7dChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                {us10yYield7dChange >= 0 ? '↑' : '↓'}{us10yYield7dChange >= 0 ? '+' : ''}{us10yYield7dChange.toFixed(2)}%
+                            </span>
+                        )}
                     </div>
-                    <p className="text-xs text-slate-400">US 10Y Yield</p>
+                    <p className="text-xs text-slate-400">
+                        US 10Y Yield
+                        {us10yYield7dChange !== undefined && <span className="text-slate-500"> • Since Last Week</span>}
+                    </p>
                 </div>
 
                 {/* Fed Net Liquidity */}
                 <div>
-                    <p className="text-4xl font-bold text-white mb-1">
-                        ${(fedNetLiquidity / 1_000_000).toFixed(2)}T
+                    <div className="flex items-baseline gap-2 mb-1">
+                        <p className="text-4xl font-bold text-white">
+                            ${(fedNetLiquidity / 1_000_000).toFixed(2)}T
+                        </p>
+                        {fedNetLiquidity7dChange !== undefined && (
+                            <span className={`text-sm font-bold ${fedNetLiquidity7dChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                {fedNetLiquidity7dChange >= 0 ? '↑' : '↓'}{fedNetLiquidity7dChange >= 0 ? '+' : ''}{fedNetLiquidity7dChange.toFixed(2)}%
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-xs text-slate-400">
+                        Fed Net Liquidity
+                        {fedNetLiquidity7dChange !== undefined && <span className="text-slate-500"> • Since Last Week</span>}
                     </p>
-                    <p className="text-xs text-slate-400">Fed Net Liquidity</p>
                 </div>
 
                 {/* Status Badge */}

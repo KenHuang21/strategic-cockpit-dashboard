@@ -16,6 +16,8 @@ interface DashboardData {
     stablecoin_mcap: number;
     usdt_dominance: number;
     rwa_tvl: number;
+    us_10y_yield_7d_change?: number;
+    fed_net_liquidity_7d_change?: number;
   };
 }
 
@@ -89,6 +91,8 @@ export default function DashboardPage() {
               us10yYield={data.metrics.us_10y_yield}
               fedNetLiquidity={data.metrics.fed_net_liquidity}
               isBearish={bearish}
+              us10yYield7dChange={data.metrics.us_10y_yield_7d_change}
+              fedNetLiquidity7dChange={data.metrics.fed_net_liquidity_7d_change}
             />
           </div>
 
