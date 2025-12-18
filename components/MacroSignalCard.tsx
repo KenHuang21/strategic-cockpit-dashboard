@@ -16,8 +16,9 @@ export function MacroSignalCard({
     fedNetLiquidity7dChange
 }: MacroSignalCardProps) {
     // Calculate Fed Net Liquidity absolute change in billions
+    // fedNetLiquidity is in millions, so divide by 1000 to get billions
     const fedNetLiquidityAbsoluteChange = fedNetLiquidity7dChange !== undefined
-        ? (fedNetLiquidity / 1_000_000) * (fedNetLiquidity7dChange / 100)
+        ? (fedNetLiquidity / 1_000) * (fedNetLiquidity7dChange / 100)
         : undefined;
 
     return (
