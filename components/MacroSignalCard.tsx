@@ -7,6 +7,9 @@ interface MacroSignalCardProps {
 }
 
 export function MacroSignalCard({ us10yYield, fedNetLiquidity, isBearish }: MacroSignalCardProps) {
+    // Mock 24h change for US 10Y Yield
+    const yieldChange = -0.12; // Mock value
+
     return (
         <div
             className={`
@@ -33,15 +36,20 @@ export function MacroSignalCard({ us10yYield, fedNetLiquidity, isBearish }: Macr
                 {/* US 10Y Yield */}
                 <div>
                     <p className="text-xs font-medium text-slate-400 mb-2">US 10Y Treasury Yield</p>
-                    <p className={`text-4xl font-mono font-bold ${isBearish ? 'text-red-300' : 'text-emerald-300'}`}>
-                        {us10yYield.toFixed(2)}%
-                    </p>
+                    <div className="flex items-baseline gap-3">
+                        <p className="text-4xl font-mono font-bold text-white">
+                            {us10yYield.toFixed(2)}%
+                        </p>
+                        <span className={`text-sm font-bold ${yieldChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                            {yieldChange >= 0 ? '+' : ''}{yieldChange.toFixed(2)}%
+                        </span>
+                    </div>
                 </div>
 
                 {/* Fed Net Liquidity */}
                 <div>
                     <p className="text-xs font-medium text-slate-400 mb-2">Fed Net Liquidity</p>
-                    <p className="text-4xl font-mono font-bold text-slate-100">
+                    <p className="text-4xl font-mono font-bold text-white">
                         ${(fedNetLiquidity / 1_000_000).toFixed(2)}T
                     </p>
                 </div>
