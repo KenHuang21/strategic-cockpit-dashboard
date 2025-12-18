@@ -7,63 +7,61 @@ interface MacroSignalCardProps {
 }
 
 export function MacroSignalCard({ us10yYield, fedNetLiquidity, isBearish }: MacroSignalCardProps) {
-    // Mock 24h change for US 10Y Yield
-    const yieldChange = -0.12; // Mock value
+    const yieldChange = -0.12;
 
     return (
         <div
             className={`
-        rounded-lg border p-6 h-full
-        transition-all duration-500
+        rounded-lg p-6 h-full
         ${isBearish
-                    ? 'border-red-500/30 bg-gradient-to-br from-red-950/40 to-red-900/20'
-                    : 'border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-emerald-900/20'
+                    ? 'bg-slate-800/60'
+                    : 'bg-emerald-900/20'
                 }
       `}
         >
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xs font-bold tracking-wider uppercase text-slate-300">
+            <div className="flex items-center justify-between mb-4">
+                <p className="text-[10px] font-bold tracking-widest uppercase text-slate-400">
                     Macro Environment
-                </h2>
+                </p>
                 {isBearish ? (
-                    <TrendingDown className="w-5 h-5 text-red-300" />
+                    <TrendingDown className="w-4 h-4 text-red-400" />
                 ) : (
-                    <TrendingUp className="w-5 h-5 text-emerald-300" />
+                    <TrendingUp className="w-4 h-4 text-emerald-400" />
                 )}
             </div>
 
             <div className="space-y-6">
                 {/* US 10Y Yield */}
                 <div>
-                    <p className="text-xs font-medium text-slate-400 mb-2">US 10Y Treasury Yield</p>
-                    <div className="flex items-baseline gap-3">
-                        <p className="text-4xl font-mono font-bold text-white">
+                    <div className="flex items-baseline gap-2 mb-1">
+                        <p className="text-5xl font-bold text-white">
                             {us10yYield.toFixed(2)}%
                         </p>
                         <span className={`text-sm font-bold ${yieldChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                            {yieldChange >= 0 ? '+' : ''}{yieldChange.toFixed(2)}%
+                            {yieldChange >= 0 ? '↑' : '↓'}{Math.abs(yieldChange).toFixed(2)}%
                         </span>
                     </div>
+                    <p className="text-xs text-slate-400">US 10Y Yield</p>
                 </div>
 
                 {/* Fed Net Liquidity */}
                 <div>
-                    <p className="text-xs font-medium text-slate-400 mb-2">Fed Net Liquidity</p>
-                    <p className="text-4xl font-mono font-bold text-white">
+                    <p className="text-4xl font-bold text-white mb-1">
                         ${(fedNetLiquidity / 1_000_000).toFixed(2)}T
                     </p>
+                    <p className="text-xs text-slate-400">Fed Net Liquidity</p>
                 </div>
 
                 {/* Status Badge */}
-                <div className="pt-4 border-t border-white/10">
+                <div className="pt-4">
                     <div className={`
-            inline-flex items-center gap-2 px-4 py-2 rounded-md text-xs font-bold tracking-wide
+            inline-flex items-center gap-2 px-3 py-1.5 rounded text-xs font-bold
             ${isBearish
-                            ? 'bg-red-500/30 text-red-200 border border-red-500/40'
-                            : 'bg-emerald-500/30 text-emerald-200 border border-emerald-500/40'
+                            ? 'bg-red-500/20 text-red-300'
+                            : 'bg-emerald-500/30 text-emerald-300'
                         }
           `}>
-                        {isBearish ? '● RISK OFF' : '● RISK ON'}
+                        ● {isBearish ? 'RISK OFF' : 'RISK ON'}
                     </div>
                 </div>
             </div>

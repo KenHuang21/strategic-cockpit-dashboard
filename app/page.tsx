@@ -5,7 +5,7 @@ import { MacroSignalCard } from "@/components/MacroSignalCard";
 import { FlowSection } from "@/components/FlowSection";
 import { RWAFocusCard } from "@/components/RWAFocusCard";
 import { isMacroBearish } from "@/lib/utils";
-import { Activity, TrendingUp } from "lucide-react";
+import { Activity } from "lucide-react";
 
 interface DashboardData {
   timestamp: string;
@@ -59,42 +59,30 @@ export default function DashboardPage() {
   });
 
   return (
-    <main className="min-h-screen p-6 md:p-8 lg:p-10">
+    <main className="min-h-screen p-6 md:p-8 lg:p-10 bg-slate-950">
       {/* Header */}
       <div className="max-w-[1600px] mx-auto mb-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-white/10">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-slate-100 mb-2">
+            <h1 className="text-3xl font-bold text-slate-200 mb-1">
               Strategic Cockpit
             </h1>
-            <p className="text-sm font-medium text-slate-400">
+            <p className="text-sm text-slate-500">
               Macro & Web3 Intelligence Dashboard
             </p>
           </div>
-          <div className="flex items-center gap-6">
-            {/* USDT Dominance - Integrated into header */}
-            <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg px-4 py-2">
-              <p className="text-[10px] font-bold tracking-wide text-slate-400 mb-1">USDT DOMINANCE</p>
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-amber-400" />
-                <p className="text-xl font-mono font-bold text-slate-100">
-                  {data.metrics.usdt_dominance.toFixed(2)}%
-                </p>
-              </div>
-            </div>
 
-            {/* Last Updated */}
-            <div className="text-right">
-              <p className="text-[10px] font-bold tracking-wide text-slate-400 mb-1">LAST UPDATED</p>
-              <p className="text-sm font-mono font-medium text-slate-200">{updatedAt}</p>
-            </div>
+          {/* Last Updated */}
+          <div className="text-right">
+            <p className="text-[10px] font-bold tracking-wide text-slate-500 uppercase">Last Updated</p>
+            <p className="text-sm font-mono text-slate-400">{updatedAt}</p>
           </div>
         </div>
       </div>
 
       {/* Bento Grid */}
       <div className="max-w-[1600px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Left Column - Macro Environment (span 3) */}
           <div className="md:col-span-3">
             <MacroSignalCard
@@ -112,24 +100,27 @@ export default function DashboardPage() {
             />
           </div>
 
-          {/* Right Column - RWA Focus (span 3) */}
+          {/* Right Column - RWA Focus + USDT Dominance (span 3) */}
           <div className="md:col-span-3">
-            <RWAFocusCard rwaTvl={data.metrics.rwa_tvl} />
+            <RWAFocusCard
+              rwaTvl={data.metrics.rwa_tvl}
+              usdtDominance={data.metrics.usdt_dominance}
+            />
           </div>
         </div>
       </div>
 
-      {/* Footer Status Bar */}
+      {/* Footer */}
       <div className="max-w-[1600px] mx-auto mt-8">
-        <div className="flex items-center justify-between text-xs border-t border-white/10 pt-6">
-          <div className="flex items-center gap-4 text-slate-500 font-medium">
+        <div className="flex items-center justify-between text-xs pt-6 border-t border-white/5">
+          <div className="text-slate-600">
             <span>6 metrics tracked</span>
-            <span>•</span>
+            <span className="mx-2">•</span>
             <span>Real-time data feeds</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-lg shadow-emerald-400/50" />
-            <span className="text-emerald-300 font-bold tracking-wide">OPERATIONAL</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-emerald-400 font-bold">OPERATIONAL</span>
           </div>
         </div>
       </div>
