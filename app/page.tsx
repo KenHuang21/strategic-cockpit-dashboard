@@ -90,7 +90,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="text-[10px] font-bold tracking-wide text-slate-500 uppercase">Last Updated</p>
-              <p className="text-sm font-mono text-slate-400">{updatedAt} (SGT)</p>
+              <p className="text-sm font-mono text-slate-400">{updatedAt} SGT</p>
             </div>
             <RefreshButton />
           </div>
