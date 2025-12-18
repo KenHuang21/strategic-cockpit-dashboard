@@ -1,0 +1,8 @@
+# Python files
+*.py
+*.pyc
+__pycache__/
+
+# Other non-dashboard files
+requirements.txt
+inspect_rwa.py
