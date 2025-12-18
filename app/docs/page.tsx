@@ -36,8 +36,8 @@ export default function DocsPage() {
                             <button
                                 onClick={() => scrollToSection('overview')}
                                 className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === 'overview'
-                                        ? 'bg-slate-800 text-slate-100'
-                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                    ? 'bg-slate-800 text-slate-100'
+                                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
                                     }`}
                             >
                                 Overview
@@ -52,8 +52,8 @@ export default function DocsPage() {
                                 <button
                                     onClick={() => scrollToSection('us-10y-yield')}
                                     className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'us-10y-yield'
-                                            ? 'bg-slate-800 text-slate-100'
-                                            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                        ? 'bg-slate-800 text-slate-100'
+                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
                                         }`}
                                 >
                                     US 10Y Treasury Yield
@@ -61,8 +61,8 @@ export default function DocsPage() {
                                 <button
                                     onClick={() => scrollToSection('fed-liquidity')}
                                     className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'fed-liquidity'
-                                            ? 'bg-slate-800 text-slate-100'
-                                            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                        ? 'bg-slate-800 text-slate-100'
+                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
                                         }`}
                                 >
                                     Fed Net Liquidity
@@ -78,8 +78,8 @@ export default function DocsPage() {
                                 <button
                                     onClick={() => scrollToSection('bitcoin')}
                                     className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'bitcoin'
-                                            ? 'bg-slate-800 text-slate-100'
-                                            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                        ? 'bg-slate-800 text-slate-100'
+                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
                                         }`}
                                 >
                                     Bitcoin Price
@@ -87,8 +87,8 @@ export default function DocsPage() {
                                 <button
                                     onClick={() => scrollToSection('stablecoin')}
                                     className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'stablecoin'
-                                            ? 'bg-slate-800 text-slate-100'
-                                            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                        ? 'bg-slate-800 text-slate-100'
+                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
                                         }`}
                                 >
                                     Stablecoin Market Cap
@@ -104,8 +104,8 @@ export default function DocsPage() {
                                 <button
                                     onClick={() => scrollToSection('usdt-dominance')}
                                     className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'usdt-dominance'
-                                            ? 'bg-slate-800 text-slate-100'
-                                            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                        ? 'bg-slate-800 text-slate-100'
+                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
                                         }`}
                                 >
                                     USDT Dominance
@@ -113,8 +113,8 @@ export default function DocsPage() {
                                 <button
                                     onClick={() => scrollToSection('rwa')}
                                     className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'rwa'
-                                            ? 'bg-slate-800 text-slate-100'
-                                            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                        ? 'bg-slate-800 text-slate-100'
+                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
                                         }`}
                                 >
                                     RWA Onchain Value
@@ -176,6 +176,19 @@ export default function DocsPage() {
                                     <strong className="text-slate-200">Strategic Threshold:</strong>
                                     <p className="mt-1">If Yield &gt; <code className="px-2 py-0.5 bg-slate-800 rounded text-emerald-400">4.5%</code>, we enter a &quot;Risk Off&quot; regime.</p>
                                 </div>
+                                <div className="mt-4">
+                                    <strong className="text-slate-200">🔗 Learn More:</strong>
+                                    <p className="mt-1">
+                                        <a
+                                            href="https://www.investopedia.com/terms/1/10-yeartreasury.asp"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
+                                        >
+                                            Understanding the 10-Year Treasury Note (Investopedia)
+                                        </a>
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -185,25 +198,46 @@ export default function DocsPage() {
                             <div className="space-y-4 text-sm leading-relaxed">
                                 <div>
                                     <strong className="text-slate-200">Definition:</strong>
-                                    <p className="mt-1">The actual amount of USD available in the financial system.</p>
+                                    <p className="mt-1">The actual amount of USD available in the financial system for asset purchasing. It acts as the &quot;fuel&quot; for markets.</p>
+                                </div>
+                                <div>
+                                    <strong className="text-slate-200">Data Source:</strong>
+                                    <p className="mt-1">FRED (St. Louis Fed). Calculation required.</p>
+                                </div>
+                                <div>
+                                    <strong className="text-slate-200">Update Frequency:</strong>
+                                    <p className="mt-1">Weekly (Published Thursday afternoon EST)</p>
                                 </div>
                                 <div>
                                     <strong className="text-slate-200">Formula:</strong>
                                     <div className="mt-2 bg-slate-900 border border-slate-800 rounded-lg p-3 font-mono text-xs text-emerald-400">
-                                        Fed Balance Sheet - TGA - Reverse Repo
+                                        Fed Balance Sheet - TGA (Treasury General Account) - Reverse Repo (RRP)
                                     </div>
-                                </div>
-                                <div>
-                                    <strong className="text-slate-200">Update Frequency:</strong>
-                                    <p className="mt-1">Weekly (Thursday)</p>
                                 </div>
                                 <div>
                                     <strong className="text-slate-200">How to Read:</strong>
                                     <ul className="mt-2 ml-6 space-y-2 list-disc">
-                                        <li><strong className="text-emerald-400">▲ Increase (Green)</strong>: Liquidity Injection. The Fed is effectively adding fuel to the market.</li>
-                                        <li><strong className="text-slate-300">Timeframe</strong>: Week-over-Week (<strong>WoW</strong>)</li>
-                                        <li><strong className="text-slate-300">Context</strong>: This is the &quot;Water Level&quot;. Even if rates are high, if Net Liquidity is rising, assets can pump.</li>
+                                        <li><strong className="text-emerald-400">▲ Increase (Green)</strong>: Liquidity Injection. The Fed is effectively adding fuel. Bullish for risk assets.</li>
+                                        <li><strong className="text-red-400">▼ Decrease (Red)</strong>: Liquidity Drain. The Fed is withdrawing fuel. Bearish for risk assets.</li>
+                                        <li><strong className="text-slate-300">Timeframe</strong>: The delta shows the change Week-over-Week (<strong>WoW</strong>)</li>
                                     </ul>
+                                </div>
+                                <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-3 mt-4">
+                                    <strong className="text-slate-200">Strategic Threshold:</strong>
+                                    <p className="mt-1">This is the &quot;Water Level&quot;. Even if rates are high, if Net Liquidity is showing sustained <strong className="text-emerald-400">▲ Increases (Green)</strong>, assets can still pump. Watch out for consecutive weekly drains.</p>
+                                </div>
+                                <div className="mt-4">
+                                    <strong className="text-slate-200">🔗 Learn More:</strong>
+                                    <p className="mt-1">
+                                        <a
+                                            href="https://www.investopedia.com/terms/f/federalreservebalancesheet.asp"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
+                                        >
+                                            Understanding the Federal Reserve Balance Sheet (Investopedia)
+                                        </a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
