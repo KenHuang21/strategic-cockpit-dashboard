@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { MacroSignalCard } from "@/components/MacroSignalCard";
 import { FlowSection } from "@/components/FlowSection";
 import { RWAFocusCard } from "@/components/RWAFocusCard";
@@ -65,13 +66,21 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="max-w-[1600px] mx-auto mb-8">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
-          <div>
-            <h1 className="text-3xl font-bold text-slate-200 mb-1">
-              Strategic Cockpit
-            </h1>
-            <p className="text-sm text-slate-500">
-              Macro & Web3 Intelligence Dashboard
-            </p>
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-200 mb-1">
+                Strategic Cockpit
+              </h1>
+              <p className="text-sm text-slate-500">
+                Macro & Web3 Intelligence Dashboard
+              </p>
+            </div>
+            <Link
+              href="/docs"
+              className="px-3 py-1.5 rounded-md bg-slate-800/50 border border-slate-700/50 hover:bg-slate-700/50 hover:border-slate-600 transition-all text-sm text-slate-300 hover:text-slate-100 font-medium"
+            >
+              📖 Docs
+            </Link>
           </div>
 
           {/* Last Updated */}
