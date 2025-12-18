@@ -16,12 +16,11 @@ export function MacroSignalCard({
     fedNetLiquidity7dChange
 }: MacroSignalCardProps) {
     // Calculate Fed Net Liquidity absolute change in billions
-    // fedNetLiquidity is in millions, so divide by 1000 to get billions
     const fedNetLiquidityAbsoluteChange = fedNetLiquidity7dChange !== undefined
         ? (fedNetLiquidity / 1_000) * (fedNetLiquidity7dChange / 100)
         : undefined;
 
-    // Calculate US 10Y Yield absolute change in basis points
+    // Calculate US 10Y Yield absolute change
     const us10yYieldAbsoluteChange = us10yYield7dChange !== undefined
         ? (us10yYield * us10yYield7dChange) / 100
         : undefined;
@@ -62,42 +61,46 @@ export function MacroSignalCard({
                         </p>
                         {us10yYieldAbsoluteChange !== undefined && (
                             <div className="flex items-center gap-1.5">
-                                {us10yYieldAbsoluteChange >= 0 ? (
-                                    <span className="text-3xl text-emerald-400">▲</span>
-                                ) : (
-                                    <span className="text-3xl text-red-400">▼</span>
-                                )}
+                                <span className={`text-3xl ${us10yYieldAbsoluteChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {us10yYieldAbsoluteChange >= 0 ? '▲' : '▼'}
+                                </span>
                                 <span className={`text-2xl font-bold ${us10yYieldAbsoluteChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                                     {Math.abs(us10yYieldAbsoluteChange).toFixed(2)}
+                                </span>
+                                <span className="text-xs text-zinc-600 font-normal ml-1">
+                                    (7d)
                                 </span>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Fed Net Liquidity */}
+                {/* Fed Net Liquidity - Terminal Style */}
                 <div>
-                    <div className="flex items-baseline gap-2 mb-1">
+                    {/* Label */}
+                    <p className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mb-2">
+                        FED NET LIQUIDITY
+                    </p>
+
+                    {/* Main Value with Arrow and Delta */}
+                    <div className="flex items-center gap-3">
                         <p className="text-4xl font-bold text-white">
                             ${(fedNetLiquidity / 1_000_000).toFixed(2)}T
                         </p>
                         {fedNetLiquidityAbsoluteChange !== undefined && (
-                            <span className={`text-sm font-bold ${fedNetLiquidityAbsoluteChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                                {fedNetLiquidityAbsoluteChange >= 0 ? '↑+' : '↓'}{fedNetLiquidityAbsoluteChange >= 0 ? '' : '-'}${Math.abs(fedNetLiquidityAbsoluteChange).toFixed(0)}B
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                                <span className={`text-2xl ${fedNetLiquidityAbsoluteChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {fedNetLiquidityAbsoluteChange >= 0 ? '▲' : '▼'}
+                                </span>
+                                <span className={`text-xl font-bold ${fedNetLiquidityAbsoluteChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    ${Math.abs(fedNetLiquidityAbsoluteChange).toFixed(0)}B
+                                </span>
+                                <span className="text-xs text-zinc-600 font-normal ml-1">
+                                    (WoW)
+                                </span>
+                            </div>
                         )}
                     </div>
-                    <p className="text-xs text-slate-400">
-                        Fed Net Liquidity
-                        {fedNetLiquidityAbsoluteChange !== undefined && (
-                            <span className="text-slate-500">
-                                {' • WoW '}
-                                <span className={fedNetLiquidityAbsoluteChange >= 0 ? 'text-emerald-400/70' : 'text-red-400/70'}>
-                                    ({fedNetLiquidityAbsoluteChange >= 0 ? 'Injection' : 'Drain'})
-                                </span>
-                            </span>
-                        )}
-                    </p>
                 </div>
 
                 {/* Status Badge */}
