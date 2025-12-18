@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MacroSignalCard } from "@/components/MacroSignalCard";
 import { FlowSection } from "@/components/FlowSection";
 import { RWAFocusCard } from "@/components/RWAFocusCard";
+import { RefreshButton } from "@/components/RefreshButton";
 import { isMacroBearish } from "@/lib/utils";
 import { Activity } from "lucide-react";
 
@@ -83,10 +84,13 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          {/* Last Updated */}
-          <div className="text-right">
-            <p className="text-[10px] font-bold tracking-wide text-slate-500 uppercase">Last Updated</p>
-            <p className="text-sm font-mono text-slate-400">{updatedAt}</p>
+          {/* Last Updated & Refresh */}
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-[10px] font-bold tracking-wide text-slate-500 uppercase">Last Updated</p>
+              <p className="text-sm font-mono text-slate-400">{updatedAt}</p>
+            </div>
+            <RefreshButton />
           </div>
         </div>
       </div>
