@@ -124,9 +124,18 @@ export default function DocsPage() {
 
                         <div>
                             <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Notifications
+                                Automation
                             </h3>
                             <div className="mt-2 space-y-1">
+                                <button
+                                    onClick={() => scrollToSection('catalyst-radar')}
+                                    className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'catalyst-radar'
+                                        ? 'bg-slate-800 text-slate-100'
+                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                        }`}
+                                >
+                                    Monthly Catalyst Radar
+                                </button>
                                 <button
                                     onClick={() => scrollToSection('telegram-notifications')}
                                     className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'telegram-notifications'
@@ -359,10 +368,159 @@ export default function DocsPage() {
                         </div>
                     </section>
 
+                    {/* Monthly Catalyst Radar Section */}
+                    <section id="catalyst-radar" className="mb-16">
+                        <h2 className="text-2xl font-bold text-slate-100 mb-8 pb-3 border-b border-slate-800">
+                            4. Monthly Catalyst Radar
+                        </h2>
+
+                        <div className="space-y-6 text-sm leading-relaxed">
+                            <div>
+                                <strong className="text-slate-200">Overview:</strong>
+                                <p className="mt-1">
+                                    The Monthly Catalyst Radar tracks upcoming US economic events with automated Telegram notifications.
+                                    It provides a rolling 4-week window of High and Medium impact events to help you anticipate market-moving data releases.
+                                </p>
+                            </div>
+
+                            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                                <div className="flex gap-3">
+                                    <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+                                    <div>
+                                        <strong className="text-slate-100">Dual-Trigger System:</strong>
+                                        <p className="mt-1 text-slate-300">
+                                            Each High impact event triggers exactly TWO notifications: a 12-hour warning and a data release alert.
+                                            This ensures you're prepared without being spammed.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <strong className="text-slate-200">Update Frequency:</strong>
+                                <ul className="mt-2 ml-6 space-y-2 list-disc">
+                                    <li><strong className="text-slate-300">Scraping:</strong> Every hour (at :00 minutes)</li>
+                                    <li><strong className="text-slate-300">Data Range:</strong> Rolling 4-week window</li>
+                                    <li><strong className="text-slate-300">Notifications:</strong> Event-based (not time-based)</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <strong className="text-slate-200">Selection Criteria:</strong>
+                                <p className="mt-1">Events must meet ALL criteria to be included:</p>
+                                <ul className="mt-2 ml-6 space-y-2 list-disc">
+                                    <li><strong className="text-slate-300">Country:</strong> United States only</li>
+                                    <li><strong className="text-slate-300">Impact Level:</strong> High or Medium</li>
+                                    <li><strong className="text-slate-300">Timeframe:</strong> Within next 28 days</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <strong className="text-slate-200">Data Source:</strong>
+                                <ul className="mt-2 ml-6 space-y-2 list-disc">
+                                    <li><strong className="text-slate-300">Provider:</strong> <a href="https://www.investing.com/economic-calendar/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">investing.com</a></li>
+                                    <li><strong className="text-slate-300">Method:</strong> Web scraping via POST API</li>
+                                    <li><strong className="text-slate-300">Refresh:</strong> Hourly to capture latest forecast updates</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <strong className="text-slate-200">Notification Triggers:</strong>
+                                <div className="mt-3 bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                                    <strong className="text-amber-400">⚡ High Impact Events Only:</strong>
+                                    <p className="mt-1 text-slate-300">
+                                        Medium impact events are displayed on the frontend but do NOT trigger Telegram notifications.
+                                        This reduces noise while keeping full visibility.
+                                    </p>
+                                </div>
+
+                                <div className="mt-4 space-y-4">
+                                    <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4">
+                                        <strong className="text-slate-200">1. 12-Hour Warning</strong>
+                                        <ul className="mt-2 ml-6 space-y-1 list-disc text-slate-300">
+                                            <li>Sent once when event is 0-12 hours away</li>
+                                            <li>Shows: Event name, time, forecast, impact level</li>
+                                            <li>Duplicate prevention via persistent flags</li>
+                                        </ul>
+                                        <div className="mt-3 bg-slate-950 rounded p-3 font-mono text-xs">
+                                            <div className="text-amber-400">⚠️ Upcoming Catalyst (11.5h)</div>
+                                            <div className="mt-2 text-slate-300">
+                                                <div>🔴 Existing Home Sales (Nov)</div>
+                                                <div>📅 2025-12-19 at 10:00</div>
+                                                <div>📊 Forecast: 4.15M</div>
+                                                <div>⚡ Impact: High</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4">
+                                        <strong className="text-slate-200">2. Data Release</strong>
+                                        <ul className="mt-2 ml-6 space-y-1 list-disc text-slate-300">
+                                            <li>Sent once when actual vs forecast becomes available</li>
+                                            <li>Shows: Actual value, forecast, deviation percentage</li>
+                                            <li>Only if actual data differs from forecast</li>
+                                        </ul>
+                                        <div className="mt-3 bg-slate-950 rounded p-3 font-mono text-xs">
+                                            <div className="text-emerald-400">📊 Data Released</div>
+                                            <div className="mt-2 text-slate-300">
+                                                <div>🔴 Existing Home Sales (Nov)</div>
+                                                <div>Actual: 4.20M vs 4.15M forecast</div>
+                                                <div className="text-emerald-400">Deviation: +1.2% (beat)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <strong className="text-slate-200">Display Behavior:</strong>
+                                <div className="mt-3 overflow-x-auto">
+                                    <table className="w-full border border-slate-800 rounded-lg overflow-hidden">
+                                        <thead>
+                                            <tr className="bg-slate-900/50 border-b border-slate-800">
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Location</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">High Impact</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Medium Impact</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-800">
+                                            <tr className="hover:bg-slate-900/30">
+                                                <td className="px-4 py-3 text-slate-300">Frontend</td>
+                                                <td className="px-4 py-3 text-emerald-400">✓ Displayed</td>
+                                                <td className="px-4 py-3 text-emerald-400">✓ Displayed</td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-900/30">
+                                                <td className="px-4 py-3 text-slate-300">Telegram</td>
+                                                <td className="px-4 py-3 text-emerald-400">✓ Notifications</td>
+                                                <td className="px-4 py-3 text-slate-500">✗ Silent</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p className="mt-2 text-xs text-slate-400">
+                                    Timeline is grouped by week: This Week, Next Week, Week 3, Week 4
+                                </p>
+                            </div>
+
+                            <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4">
+                                <strong className="text-slate-200">Why This Matters:</strong>
+                                <p className="mt-2">
+                                    Economic data releases are often the primary catalyst for market volatility.
+                                    By tracking these events, you can:
+                                </p>
+                                <ul className="mt-2 ml-6 space-y-1 list-disc text-slate-300">
+                                    <li>Anticipate potential market volatility windows</li>
+                                    <li>Validate macro thesis with actual vs forecast deviations</li>
+                                    <li>Avoid being caught off-guard by major data releases</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
                     {/* Telegram Notifications Section */}
                     <section id="telegram-notifications" className="mb-16">
                         <h2 className="text-2xl font-bold text-slate-100 mb-8 pb-3 border-b border-slate-800">
-                            4. Telegram Notifications
+                            5. Telegram Notifications
                         </h2>
 
                         <div className="space-y-6 text-sm leading-relaxed">
