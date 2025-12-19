@@ -79,11 +79,26 @@ export default function CatalystRadar() {
 
     const formatDate = (dateStr: string, timeStr: string): string => {
         try {
+            // Parse the date and time (assuming EST timezone from investing.com)
+            const [hours, minutes] = timeStr.split(':').map(Number);
             const date = new Date(dateStr);
+
+            // Set the time (treating as EST)
+            date.setHours(hours, minutes, 0, 0);
+
+            // Convert from EST (UTC-5) to SGT (UTC+8)
+            // EST to UTC: +5 hours, UTC to SGT: +8 hours = +13 hours total
+            // Note: This assumes standard time (EST). During EDT, it would be +12 hours.
+            // For simplicity, we'll use +13 hours (can be refined with timezone libs if needed)
+            const sgtDate = new Date(date.getTime() + (13 * 60 * 60 * 1000));
+
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const dayName = days[date.getDay()];
-            const day = date.getDate();
-            return `${dayName} ${day}, ${timeStr}`;
+            const dayName = days[sgtDate.getDay()];
+            const day = sgtDate.getDate();
+            const sgtHours = sgtDate.getHours().toString().padStart(2, '0');
+            const sgtMinutes = sgtDate.getMinutes().toString().padStart(2, '0');
+
+            return `${dayName} ${day}, ${sgtHours}:${sgtMinutes} SGT`;
         } catch {
             return `${dateStr} ${timeStr}`;
         }
@@ -203,10 +218,10 @@ export default function CatalystRadar() {
                                                                 <span className="text-slate-400">Act:</span>
                                                                 <span
                                                                     className={`font-semibold ${isBeat
-                                                                            ? 'text-emerald-400'
-                                                                            : isMiss
-                                                                                ? 'text-red-400'
-                                                                                : 'text-slate-300'
+                                                                        ? 'text-emerald-400'
+                                                                        : isMiss
+                                                                            ? 'text-red-400'
+                                                                            : 'text-slate-300'
                                                                         }`}
                                                                 >
                                                                     {event.actual}
