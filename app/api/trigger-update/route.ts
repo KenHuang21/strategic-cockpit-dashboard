@@ -4,7 +4,7 @@ export async function POST() {
     try {
         const GITHUB_PAT = process.env.GITHUB_PAT;
         const REPO_OWNER = process.env.REPO_OWNER || 'KenHuang21';
-        const REPO_NAME = process.env.REPO_NAME || 'strategic-cockpit-dashboard';
+        const REPO_NAME = process.env.REPO_NAME || 'strategic-cockpit-backend';
 
         if (!GITHUB_PAT) {
             return NextResponse.json(
