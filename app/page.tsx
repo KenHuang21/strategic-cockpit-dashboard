@@ -6,6 +6,7 @@ import { MacroSignalCard } from "@/components/MacroSignalCard";
 import { FlowSection } from "@/components/FlowSection";
 import { RWAFocusCard } from "@/components/RWAFocusCard";
 import { RefreshButton } from "@/components/RefreshButton";
+import CatalystRadar from "@/components/CatalystRadar";
 import { isMacroBearish } from "@/lib/utils";
 import { Activity } from "lucide-react";
 
@@ -126,6 +127,11 @@ export default function DashboardPage() {
               usdtDominance={data.metrics.usdt_dominance}
             />
           </div>
+        </div>
+
+        {/* Monthly Catalyst Radar - Full Width Below */}
+        <div className="mt-6">
+          <CatalystRadar />
         </div>
       </div>
 

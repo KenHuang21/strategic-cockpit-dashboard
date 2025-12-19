@@ -1,0 +1,70 @@
+{
+  "updated_at": "2025-12-19T06:34:28.929637Z",
+  "events": [
+    {
+      "id": "ffa5b27477f98740",
+      "date": "2025-12-19",
+      "time": "15:30",
+      "name": "CFTC Crude Oil speculative net positions",
+      "impact": "Medium",
+      "forecast": null,
+      "actual": null,
+      "previous": "55.0K",
+      "status": "upcoming",
+      "notification_sent_12h": false,
+      "notification_sent_release": false
+    },
+    {
+      "id": "272aaee73949b9ac",
+      "date": "2025-12-19",
+      "time": "15:30",
+      "name": "CFTC Gold speculative net positions",
+      "impact": "Medium",
+      "forecast": null,
+      "actual": null,
+      "previous": "204.6K",
+      "status": "upcoming",
+      "notification_sent_12h": false,
+      "notification_sent_release": false
+    },
+    {
+      "id": "92135ccd3310dddc",
+      "date": "2025-12-19",
+      "time": "15:30",
+      "name": "CFTC Nasdaq 100 speculative net positions",
+      "impact": "Medium",
+      "forecast": null,
+      "actual": null,
+      "previous": "57.4K",
+      "status": "upcoming",
+      "notification_sent_12h": false,
+      "notification_sent_release": false
+    },
+    {
+      "id": "5be7f348f05ab847",
+      "date": "2025-12-19",
+      "time": "15:30",
+      "name": "CFTC S&P 500 speculative net positions",
+      "impact": "Medium",
+      "forecast": null,
+      "actual": null,
+      "previous": "-155.3K",
+      "status": "upcoming",
+      "notification_sent_12h": false,
+      "notification_sent_release": false
+    },
+    {
+      "id": "ba3fbdad4574a9de",
+      "date": "2025-12-19",
+      "time": "21:00",
+      "name": "U.S. President Trump Speaks",
+      "impact": "High",
+      "forecast": null,
+      "actual": null,
+      "previous": null,
+      "status": "upcoming",
+      "notification_sent_12h": false,
+      "notification_sent_release": false
+    }
+  ]
+}
