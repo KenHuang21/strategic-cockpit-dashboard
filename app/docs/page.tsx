@@ -121,6 +121,23 @@ export default function DocsPage() {
                                 </button>
                             </div>
                         </div>
+
+                        <div>
+                            <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                Notifications
+                            </h3>
+                            <div className="mt-2 space-y-1">
+                                <button
+                                    onClick={() => scrollToSection('telegram-notifications')}
+                                    className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeSection === 'telegram-notifications'
+                                        ? 'bg-slate-800 text-slate-100'
+                                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50'
+                                        }`}
+                                >
+                                    Telegram Notifications
+                                </button>
+                            </div>
+                        </div>
                     </nav>
                 </aside>
 
@@ -338,6 +355,166 @@ export default function DocsPage() {
                                         <li>If RWA grows while BTC is flat, it confirms a structural shift in utility</li>
                                     </ul>
                                 </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Telegram Notifications Section */}
+                    <section id="telegram-notifications" className="mb-16">
+                        <h2 className="text-2xl font-bold text-slate-100 mb-8 pb-3 border-b border-slate-800">
+                            4. Telegram Notifications
+                        </h2>
+
+                        <div className="space-y-6 text-sm leading-relaxed">
+                            <div>
+                                <strong className="text-slate-200">Overview:</strong>
+                                <p className="mt-1">
+                                    The Strategic Cockpit runs automated data collection every <strong>15 minutes</strong> via GitHub Actions.
+                                    However, to minimize noise and maximize signal, Telegram notifications are <strong>only sent when metrics
+                                        cross predefined thresholds</strong>.
+                                </p>
+                            </div>
+
+                            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                                <div className="flex gap-3">
+                                    <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+                                    <div>
+                                        <strong className="text-slate-100">Smart Filtering:</strong>
+                                        <p className="mt-1 text-slate-300">
+                                            Notifications detect changes in <strong>both directions</strong> (increases ▲ and decreases ▼).
+                                            This ensures you're alerted to significant moves regardless of market direction.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <strong className="text-slate-200">Notification Thresholds:</strong>
+                                <div className="mt-3 overflow-x-auto">
+                                    <table className="w-full border border-slate-800 rounded-lg overflow-hidden">
+                                        <thead>
+                                            <tr className="bg-slate-900/50 border-b border-slate-800">
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Metric</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Threshold</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Type</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Sensitivity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-800">
+                                            <tr className="hover:bg-slate-900/30">
+                                                <td className="px-4 py-3 text-slate-300">🏛️ US 10Y Yield</td>
+                                                <td className="px-4 py-3">
+                                                    <code className="px-2 py-0.5 bg-slate-800 rounded text-emerald-400">0.0</code>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-400">Absolute</td>
+                                                <td className="px-4 py-3 text-red-400 font-medium">Any Change</td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-900/30">
+                                                <td className="px-4 py-3 text-slate-300">💧 Fed Net Liquidity</td>
+                                                <td className="px-4 py-3">
+                                                    <code className="px-2 py-0.5 bg-slate-800 rounded text-emerald-400">0.0%</code>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-400">Relative</td>
+                                                <td className="px-4 py-3 text-red-400 font-medium">Any Change</td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-900/30">
+                                                <td className="px-4 py-3 text-slate-300">🌊 Stablecoin Market Cap</td>
+                                                <td className="px-4 py-3">
+                                                    <code className="px-2 py-0.5 bg-slate-800 rounded text-emerald-400">0.1%</code>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-400">Relative</td>
+                                                <td className="px-4 py-3 text-yellow-400">High</td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-900/30">
+                                                <td className="px-4 py-3 text-slate-300">₿ Bitcoin Price</td>
+                                                <td className="px-4 py-3">
+                                                    <code className="px-2 py-0.5 bg-slate-800 rounded text-emerald-400">0.5%</code>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-400">Relative</td>
+                                                <td className="px-4 py-3 text-blue-400">Medium</td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-900/30">
+                                                <td className="px-4 py-3 text-slate-300">😨 USDT Dominance</td>
+                                                <td className="px-4 py-3">
+                                                    <code className="px-2 py-0.5 bg-slate-800 rounded text-emerald-400">0.5%</code>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-400">Relative</td>
+                                                <td className="px-4 py-3 text-blue-400">Medium</td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-900/30">
+                                                <td className="px-4 py-3 text-slate-300">🏦 RWA TVL</td>
+                                                <td className="px-4 py-3">
+                                                    <code className="px-2 py-0.5 bg-slate-800 rounded text-emerald-400">1.0%</code>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-400">Relative</td>
+                                                <td className="px-4 py-3 text-slate-400">Low</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div>
+                                <strong className="text-slate-200">How It Works:</strong>
+                                <ul className="mt-2 ml-6 space-y-2 list-disc">
+                                    <li>
+                                        <strong className="text-slate-300">Absolute Thresholds</strong> (US 10Y Yield):
+                                        Triggers on the raw difference in value (e.g., 4.15% → 4.16% = 0.01 point change).
+                                    </li>
+                                    <li>
+                                        <strong className="text-slate-300">Relative Thresholds</strong> (All others):
+                                        Triggers on percentage change from the previous value (e.g., BTC $100,000 → $100,500 = 0.5% change).
+                                    </li>
+                                    <li>
+                                        <strong className="text-slate-300">Bidirectional Detection</strong>:
+                                        Both increases (▲ green arrows) and decreases (▼ red arrows) are tracked.
+                                        The threshold applies to the <em>absolute value</em> of the change.
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4 mt-4">
+                                <strong className="text-slate-200">Notification Format:</strong>
+                                <p className="mt-2">Each notification displays:</p>
+                                <ul className="mt-2 ml-6 space-y-1 list-disc text-slate-300">
+                                    <li>Current metric value</li>
+                                    <li>Direction indicator (▲ green for up, ▼ red for down)</li>
+                                    <li>Percentage change since last notification</li>
+                                    <li>Risk status (RISK ON / RISK OFF)</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <strong className="text-slate-200">Example Scenarios:</strong>
+                                <div className="mt-3 space-y-3">
+                                    <div className="bg-slate-900/30 border border-slate-800 rounded-lg p-3">
+                                        <div className="text-slate-200 font-medium mb-1">✅ Notification Sent</div>
+                                        <div className="text-xs text-slate-400">
+                                            BTC price: $100,000 → $100,600 (0.6% increase) - Exceeds 0.5% threshold
+                                        </div>
+                                    </div>
+                                    <div className="bg-slate-900/30 border border-slate-800 rounded-lg p-3">
+                                        <div className="text-slate-200 font-medium mb-1">❌ No Notification</div>
+                                        <div className="text-xs text-slate-400">
+                                            BTC price: $100,000 → $100,400 (0.4% increase) - Below 0.5% threshold
+                                        </div>
+                                    </div>
+                                    <div className="bg-slate-900/30 border border-slate-800 rounded-lg p-3">
+                                        <div className="text-slate-200 font-medium mb-1">✅ Notification Sent (Decrease)</div>
+                                        <div className="text-xs text-slate-400">
+                                            BTC price: $100,000 → $99,400 (0.6% decrease) - Exceeds 0.5% threshold
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mt-6">
+                                <strong className="text-amber-400">⚡ High-Priority Metrics:</strong>
+                                <p className="mt-1 text-slate-300">
+                                    US 10Y Yield and Fed Net Liquidity have <strong>0.0 thresholds</strong>, meaning you'll be
+                                    notified of <strong>every change</strong>. These are critical macro indicators that directly
+                                    impact market conditions.
+                                </p>
                             </div>
                         </div>
                     </section>
