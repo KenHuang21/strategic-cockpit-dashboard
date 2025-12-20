@@ -79,24 +79,17 @@ export default function CatalystRadar() {
 
     const formatDate = (dateStr: string, timeStr: string): string => {
         try {
-            // Parse the date and time (assuming EST timezone from investing.com)
+            // Data from investing.com API is already in SGT timezone (timeZone: 8)
+            // No conversion needed - just format for display
             const [hours, minutes] = timeStr.split(':').map(Number);
             const date = new Date(dateStr);
-
-            // Set the time (treating as EST)
             date.setHours(hours, minutes, 0, 0);
 
-            // Convert from EST (UTC-5) to SGT (UTC+8)
-            // EST to UTC: +5 hours, UTC to SGT: +8 hours = +13 hours total
-            // Note: This assumes standard time (EST). During EDT, it would be +12 hours.
-            // For simplicity, we'll use +13 hours (can be refined with timezone libs if needed)
-            const sgtDate = new Date(date.getTime() + (13 * 60 * 60 * 1000));
-
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const dayName = days[sgtDate.getDay()];
-            const day = sgtDate.getDate();
-            const sgtHours = sgtDate.getHours().toString().padStart(2, '0');
-            const sgtMinutes = sgtDate.getMinutes().toString().padStart(2, '0');
+            const dayName = days[date.getDay()];
+            const day = date.getDate();
+            const sgtHours = date.getHours().toString().padStart(2, '0');
+            const sgtMinutes = date.getMinutes().toString().padStart(2, '0');
 
             return `${dayName} ${day}, ${sgtHours}:${sgtMinutes} SGT`;
         } catch {

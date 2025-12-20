@@ -29,12 +29,19 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetchData();
+    // Refresh every 15 minutes to keep data fresh
+    const interval = setInterval(fetchData, 15 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchData = () => {
     fetch('/dashboard_data.json')
       .then(res => res.json())
       .then(setData)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  };
 
   if (loading) {
     return (
