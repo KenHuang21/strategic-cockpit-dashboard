@@ -86,12 +86,14 @@ export default function CatalystRadar() {
             date.setHours(hours, minutes, 0, 0);
 
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const dayName = days[date.getDay()];
             const day = date.getDate();
+            const month = months[date.getMonth()];
             const sgtHours = date.getHours().toString().padStart(2, '0');
             const sgtMinutes = date.getMinutes().toString().padStart(2, '0');
 
-            return `${dayName} ${day}, ${sgtHours}:${sgtMinutes} SGT`;
+            return `${dayName} ${day} ${month}, ${sgtHours}:${sgtMinutes} SGT`;
         } catch {
             return `${dateStr} ${timeStr}`;
         }
